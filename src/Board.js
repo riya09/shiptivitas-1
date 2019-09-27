@@ -8,6 +8,7 @@ export default class Board extends React.Component {
   constructor(props) {
     super(props);
     const clients = this.getClients();
+    this.containers = [];
     this.state = {
       clients: {
         backlog: clients.filter(client => !client.status || client.status === 'backlog'),
@@ -20,6 +21,23 @@ export default class Board extends React.Component {
       inProgress: React.createRef(),
       complete: React.createRef(),
     }
+  }
+  componentDidMount () {
+    Dragula(this.containers, {removeOnSpill: true}).on('drop',function(el,target){
+      if(this.containers[0]===target){
+        el.className=el.className.replace(el.className,'Card Card-grey');
+        el.setAttribute('data-status','backlog')
+      }
+      if(this.containers[1]===target){
+        el.className=el.className.replace(el.className,'Card Card-blue');
+        el.setAttribute('data-status','in-progress')
+        console.log(el.className);
+      }
+      if(this.containers[2]===target){
+        el.className=el.className.replace(el.className,'Card Card-green');
+        el.setAttribute('data-status','complete')
+      }
+    })
   }
   getClients() {
     return [
